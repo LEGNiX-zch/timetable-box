@@ -1,34 +1,36 @@
-# Gradle files
+# Gradle
 .gradle/
 build/
+!gradle/wrapper/gradle-wrapper.jar
 
-# Local configuration file (sdk path, etc)
+# Local config
 local.properties
-
-# Log/OS Files
-*.log
-
-# Android Studio generated files and folders
+*.keystore
+*.jks
 captures/
 .externalNativeBuild/
 .cxx/
-*.aab
-*.apk
-output-metadata.json
+*.hprof
 
-# IntelliJ
+# IntelliJ / Android Studio
 *.iml
 .idea/
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
 
-# Keystore files
-*.jks
-*.keystore
+# Output
+*.apk
+*.aab
+output-metadata.json
 
-# Google Services (e.g. APIs or Firebase)
+# Google Services
 google-services.json
 
-# Android Profiling
-*.hprof
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Generated launcher icon source (保留 res 目录里的缩放产物)
+/app_icon_source*

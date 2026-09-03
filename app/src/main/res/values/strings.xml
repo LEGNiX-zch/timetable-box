@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">课程表</string>
+    <string name="action_export">导出图片</string>
+    <string name="title_edit_course">编辑课程</string>
+    <string name="hint_course_name">课程名称</string>
+    <string name="label_bg_color">标记颜色</string>
+    <string name="label_merge">合并课时数</string>
+    <string name="btn_save">保存</string>
+    <string name="btn_delete">删除</string>
+    <string name="btn_cancel">取消</string>
+    <string name="tip_permission_denied">需要存储权限才能导出图片</string>
+    <string name="tip_export_ok">已导出到 Download/timetable-box/</string>
+    <string name="tip_export_fail">导出失败，请检查存储权限</string>
+    <string name="tip_select_first">请先选择起始单元格</string>
+
+    <!-- 表头 -->
+    <string name="period_0">早读</string>
+    <string name="period_1">1</string>
+    <string name="period_2">2</string>
+    <string name="period_3">3</string>
+    <string name="period_4">4</string>
+    <string name="period_5">5</string>
+    <string name="period_6">6</string>
+    <string name="period_7">7</string>
+    <string name="period_8">晚自习</string>
+    <string name="period_9">2</string>
+    <string name="period_10">3</string>
+
+    <string name="day_mon">周一</string>
+    <string name="day_tue">周二</string>
+    <string name="day_wed">周三</string>
+    <string name="day_thu">周四</string>
+    <string name="day_fri">周五</string>
+    <string name="day_sat">周六</string>
+    <string name="day_sun">周日</string>
+</resources>

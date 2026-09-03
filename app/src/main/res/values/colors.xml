@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主题基色 -->
+    <color name="colorPrimary">#2F80ED</color>
+    <color name="colorPrimaryDark">#1F5FAD</color>
+    <color name="colorAccent">#FF8A65</color>
+    <color name="colorBackground">#F7F9FC</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorTextPrimary">#1F2937</color>
+    <color name="colorTextSecondary">#6B7280</color>
+    <color name="colorDivider">#E5E7EB</color>
+
+    <!-- 课程标记色（供用户选择的背景色） -->
+    <color name="mark_transparent">#00000000</color>
+    <color name="mark_red">#FDECEC</color>
+    <color name="mark_orange">#FFF3E0</color>
+    <color name="mark_yellow">#FFF8DC</color>
+    <color name="mark_green">#E8F5E9</color>
+    <color name="mark_cyan">#E0F7FA</color>
+    <color name="mark_blue">#E3F2FD</color>
+    <color name="mark_purple">#F3E5F5</color>
+    <color name="mark_pink">#FCE4EC</color>
+    <color name="mark_gray">#ECEFF1</color>
+</resources>

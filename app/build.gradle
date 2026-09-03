@@ -1,0 +1,52 @@
+// app/build.gradle for timetable-box
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.timetable.box'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.timetable.box"
+        minSdk 27
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+
+        // 单 APK 同时支持 32 位和 64 位
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+
+        // 精简输出，移除无用语言资源
+        resourceConfigurations += ['zh-rCN', 'en']
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    buildFeatures {
+        // 精简：不使用 ViewBinding / DataBinding，纯 XML + Java
+        viewBinding false
+    }
+}
+
+dependencies {
+    // 仅依赖 AndroidX 核心库，零额外依赖，APK 最小化
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+}

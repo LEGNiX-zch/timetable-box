@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 手表小屏尺寸：整体缩小 -->
+    <dimen name="period_label_width">24dp</dimen>
+    <dimen name="day_header_height">24dp</dimen>
+    <dimen name="cell_min_height">34dp</dimen>
+    <dimen name="text_size_period">10sp</dimen>
+    <dimen name="text_size_day">10sp</dimen>
+    <dimen name="text_size_course">11sp</dimen>
+    <dimen name="cell_padding">2dp</dimen>
+    <dimen name="appbar_height">36dp</dimen>
+</resources>
