@@ -2,13 +2,14 @@ package com.timetable.box.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -16,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.timetable.box.R;
 import com.timetable.box.model.Course;
@@ -76,7 +78,7 @@ public class EditCourseDialog {
         btnCancel = v.findViewById(R.id.btn_cancel);
 
         setupMergeSpinner(context, editing);
-        setupColorGroup(context, editing.color);
+        setupColorGroup();
         prefill(editing);
 
         dialog = new AlertDialog.Builder(context)
@@ -97,24 +99,19 @@ public class EditCourseDialog {
     }
 
     private void prefill(Course c) {
-        if (c != null) {
-            etName.setText(c.name);
-            // 合并课时 spinner 选中项
-            int maxSpan = Period.TOTAL - c.startPeriod;
-            // Spinner 项已按 1..maxSpan 构造
-            int pos = c.span - 1;
-            if (pos >= 0 && pos < maxSpan) spMerge.setSelection(pos);
-            // 删除按钮仅在编辑已有课程时显示
-            if (!TextUtils.isEmpty(c.name) || !TextUtils.isEmpty(c.color)) {
-                btnDelete.setVisibility(View.VISIBLE);
-            }
-            // 颜色选中
-            for (int i = 0; i < COLOR_PALETTE.length; i++) {
-                if (COLOR_PALETTE[i].equalsIgnoreCase(c.color)) {
-                    RadioButton rb = findRadioButton(i);
-                    if (rb != null) rb.setChecked(true);
-                    break;
-                }
+        if (c == null) return;
+        etName.setText(c.name);
+        int maxSpan = Period.TOTAL - c.startPeriod;
+        int pos = c.span - 1;
+        if (pos >= 0 && pos < maxSpan) spMerge.setSelection(pos);
+        if (!TextUtils.isEmpty(c.name) || !TextUtils.isEmpty(c.color)) {
+            btnDelete.setVisibility(View.VISIBLE);
+        }
+        for (int i = 0; i < COLOR_PALETTE.length; i++) {
+            if (COLOR_PALETTE[i].equalsIgnoreCase(c.color)) {
+                RadioButton rb = findRadioButton(i);
+                if (rb != null) rb.setChecked(true);
+                break;
             }
         }
     }
@@ -129,11 +126,10 @@ public class EditCourseDialog {
         spMerge.setAdapter(new ArrayAdapter<>(ctx, android.R.layout.simple_spinner_dropdown_item, items));
     }
 
-    private void setupColorGroup(Context ctx, String current) {
+    private void setupColorGroup() {
         for (int i = 0; i < COLOR_PALETTE.length; i++) {
             RadioButton rb = findRadioButton(i);
             if (rb == null) continue;
-            // 给每个颜色设置 buttonTint
             try {
                 int color;
                 if (COLOR_PALETTE[i].isEmpty()) {
@@ -141,27 +137,40 @@ public class EditCourseDialog {
                 } else {
                     color = Color.parseColor(COLOR_PALETTE[i]);
                 }
-                rb.getButtonDrawable().setTint(color);
+                // 兼容方案：用 DrawableCompat 设置 tint
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Drawable d = rb.getButtonDrawable();
+                    if (d != null) {
+                        d.setTint(color);
+                    }
+                } else {
+                    Drawable d = rb.getButtonDrawable();
+                    if (d != null) {
+                        DrawableCompat.setTint(d, color);
+                    }
+                }
             } catch (Exception ignored) {}
         }
-        // 默认选中 index 0 (无色)
-        findRadioButton(0).setChecked(true);
+        RadioButton rb0 = findRadioButton(0);
+        if (rb0 != null) rb0.setChecked(true);
     }
 
     private RadioButton findRadioButton(int index) {
+        int id;
         switch (index) {
-            case 0: return rgColor.findViewById(R.id.rb_color_0);
-            case 1: return rgColor.findViewById(R.id.rb_color_1);
-            case 2: return rgColor.findViewById(R.id.rb_color_2);
-            case 3: return rgColor.findViewById(R.id.rb_color_3);
-            case 4: return rgColor.findViewById(R.id.rb_color_4);
-            case 5: return rgColor.findViewById(R.id.rb_color_5);
-            case 6: return rgColor.findViewById(R.id.rb_color_6);
-            case 7: return rgColor.findViewById(R.id.rb_color_7);
-            case 8: return rgColor.findViewById(R.id.rb_color_8);
-            case 9: return rgColor.findViewById(R.id.rb_color_9);
+            case 0: id = R.id.rb_color_0; break;
+            case 1: id = R.id.rb_color_1; break;
+            case 2: id = R.id.rb_color_2; break;
+            case 3: id = R.id.rb_color_3; break;
+            case 4: id = R.id.rb_color_4; break;
+            case 5: id = R.id.rb_color_5; break;
+            case 6: id = R.id.rb_color_6; break;
+            case 7: id = R.id.rb_color_7; break;
+            case 8: id = R.id.rb_color_8; break;
+            case 9: id = R.id.rb_color_9; break;
+            default: return null;
         }
-        return null;
+        return rgColor.findViewById(id);
     }
 
     private Course buildCourse() {
@@ -173,7 +182,6 @@ public class EditCourseDialog {
         int spanPos = spMerge.getSelectedItemPosition();
         c.span = spanPos >= 0 ? spanPos + 1 : 1;
 
-        // 选中颜色
         int checkedId = rgColor.getCheckedRadioButtonId();
         int idx = indexOfChecked(checkedId);
         c.color = idx >= 0 ? COLOR_PALETTE[idx] : "";

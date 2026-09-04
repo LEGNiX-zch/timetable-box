@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
-    <domain include="true" path="shared_prefs/com.timetable.box.xml" />
+    <domain include="true" path="shared_prefs/schedule_box_prefs.xml" />
 </full-backup-content>

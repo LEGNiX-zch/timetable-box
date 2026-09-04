@@ -20,7 +20,7 @@ android {
         }
 
         // 精简输出，移除无用语言资源
-        resourceConfigurations += ['zh-rCN', 'en']
+        resourceConfigurations = ['zh-rCN', 'en']
     }
 
     buildTypes {
@@ -37,11 +37,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
-    }
-
-    buildFeatures {
-        // 精简：不使用 ViewBinding / DataBinding，纯 XML + Java
-        viewBinding false
     }
 }
 

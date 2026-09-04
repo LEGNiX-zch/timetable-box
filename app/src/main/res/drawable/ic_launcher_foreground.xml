@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- 简洁课表网格图标 -->
+    <!-- 外框 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,24 L78,24 L78,84 L30,84 Z" />
+    <!-- 横线 -->
+    <path
+        android:fillColor="#2F80ED"
+        android:pathData="M30,38 L78,38 L78,39 L30,39 Z" />
+    <path
+        android:fillColor="#2F80ED"
+        android:pathData="M30,52 L78,52 L78,53 L30,53 Z" />
+    <path
+        android:fillColor="#2F80ED"
+        android:pathData="M30,66 L78,66 L78,67 L30,67 Z" />
+    <!-- 竖线 -->
+    <path
+        android:fillColor="#2F80ED"
+        android:pathData="M44,24 L45,24 L45,84 L44,84 Z" />
+    <path
+        android:fillColor="#2F80ED"
+        android:pathData="M58,24 L59,24 L59,84 L58,84 Z" />
+    <!-- 顶部绑定环 -->
+    <path
+        android:fillColor="#2F80ED"
+        android:pathData="M40,20 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 M60,20 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+</vector>

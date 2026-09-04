@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <domain include="true" path="shared_prefs/schedule_box_prefs.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <domain include="true" path="shared_prefs/schedule_box_prefs.xml" />
+    </device-transfer>
+</data-extraction-rules>

@@ -16,14 +16,15 @@
 
     <!-- 课程名输入 -->
     <EditText
-        android:id="@id/et_course_name"
+        android:id="@+id/et_course_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/hint_course_name"
         android:inputType="text"
         android:singleLine="true"
         android:layout_marginTop="12dp"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:autofillHints="" />
 
     <!-- 合并课时 -->
     <LinearLayout
@@ -40,10 +41,10 @@
             android:textSize="14sp" />
 
         <Spinner
-            android:id="@id/sp_merge_count"
+            android:id="@+id/sp_merge_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12sp" />
+            android:layout_marginStart="12dp" />
     </LinearLayout>
 
     <!-- 标记颜色 -->
@@ -55,7 +56,7 @@
         android:layout_marginTop="12dp" />
 
     <RadioGroup
-        android:id="@id/rg_color"
+        android:id="@+id/rg_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -64,61 +65,61 @@
         android:padding="4dp">
 
         <RadioButton
-            android:id="@id/rb_color_0"
+            android:id="@+id/rb_color_0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/ic_color_swatch"
             android:buttonTint="@color/mark_transparent" />
         <RadioButton
-            android:id="@id/rb_color_1"
+            android:id="@+id/rb_color_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/ic_color_swatch"
             android:buttonTint="@color/mark_red" />
         <RadioButton
-            android:id="@id/rb_color_2"
+            android:id="@+id/rb_color_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/ic_color_swatch"
             android:buttonTint="@color/mark_orange" />
         <RadioButton
-            android:id="@id/rb_color_3"
+            android:id="@+id/rb_color_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/ic_color_swatch"
             android:buttonTint="@color/mark_yellow" />
         <RadioButton
-            android:id="@id/rb_color_4"
+            android:id="@+id/rb_color_4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/ic_color_swatch"
             android:buttonTint="@color/mark_green" />
         <RadioButton
-            android:id="@id/rb_color_5"
+            android:id="@+id/rb_color_5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/ic_color_swatch"
             android:buttonTint="@color/mark_cyan" />
         <RadioButton
-            android:id="@id/rb_color_6"
+            android:id="@+id/rb_color_6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/ic_color_swatch"
             android:buttonTint="@color/mark_blue" />
         <RadioButton
-            android:id="@id/rb_color_7"
+            android:id="@+id/rb_color_7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/ic_color_swatch"
             android:buttonTint="@color/mark_purple" />
         <RadioButton
-            android:id="@id/rb_color_8"
+            android:id="@+id/rb_color_8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/ic_color_swatch"
             android:buttonTint="@color/mark_pink" />
         <RadioButton
-            android:id="@id/rb_color_9"
+            android:id="@+id/rb_color_9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/ic_color_swatch"
@@ -134,7 +135,7 @@
         android:layout_marginTop="16dp">
 
         <Button
-            android:id="@id/btn_delete"
+            android:id="@+id/btn_delete"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -142,14 +143,14 @@
             android:visibility="gone" />
 
         <Button
-            android:id="@id/btn_cancel"
+            android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_cancel"
             android:layout_marginStart="8dp" />
 
         <Button
-            android:id="@id/btn_save"
+            android:id="@+id/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_save"

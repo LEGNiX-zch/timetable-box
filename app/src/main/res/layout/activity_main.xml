@@ -7,7 +7,7 @@
 
     <!-- 顶部 AppBar -->
     <RelativeLayout
-        android:id="@id/appbar"
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/appbar_height"
         android:background="@color/colorPrimary"
@@ -23,7 +23,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@id/btn_export"
+            android:id="@+id/btn_export"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -35,9 +35,9 @@
 
     <!-- 课表网格（自定义 View） -->
     <com.timetable.box.ui.ScheduleGridView
-        android:id="@id/schedule_grid"
+        android:id="@+id/schedule_grid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1" />
 
 </LinearLayout>

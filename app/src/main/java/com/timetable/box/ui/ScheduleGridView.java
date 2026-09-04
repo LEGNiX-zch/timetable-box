@@ -2,7 +2,6 @@ package com.timetable.box.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -14,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.timetable.box.R;
 import com.timetable.box.model.Course;
@@ -27,7 +27,7 @@ import java.util.Map;
  * 自定义课表网格 View。
  *
  * 运行时自动识别屏幕尺寸：
- *   - 小屏/手表（sw < 360dp 或对角线 < 5inch）  -> compact 紧凑布局
+ *   - 小屏/手表（sw < 300dp 或对角线 < 4.5inch）  -> compact 紧凑布局
  *   - 普通手机                                     -> 标准布局
  *
  * 同时支持外部调用 drawToCanvas(Canvas) 进行图片导出。
@@ -52,15 +52,21 @@ public class ScheduleGridView extends View {
     private float headerHeight;
     private float leftLabelWidth;
     private float pad;
+    private float density;
 
     private int textSizeDay;
     private int textSizeCourse;
     private int textSizePeriod;
 
+    // 缓存颜色值
+    private int colorDivider;
+    private int colorPrimary;
+    private int colorTextPrimary;
+    private int colorTextSecondary;
+
     // 位置缓存（用于 hit-testing）
-    private RectF[][] cellRects = new RectF[COLS][ROWS];
-    private RectF[] headerRects = new RectF[COLS]; // 顶部星期
-    private RectF[] labelRects = new RectF[ROWS];  // 左侧课时标签
+    private final RectF[][] cellRects = new RectF[COLS][ROWS];
+    private final RectF[] headerRects = new RectF[COLS];
 
     // 绘制用 Paint
     private final Paint bgPaint = new Paint();
@@ -86,48 +92,51 @@ public class ScheduleGridView extends View {
     }
 
     private void init(Context context) {
-        Resources r = context.getResources();
-        DisplayMetrics dm = r.getDisplayMetrics();
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        density = dm.density;
+
+        // 缓存颜色
+        colorDivider = ContextCompat.getColor(context, R.color.colorDivider);
+        colorPrimary = ContextCompat.getColor(context, R.color.colorPrimary);
+        colorTextPrimary = ContextCompat.getColor(context, R.color.colorTextPrimary);
+        colorTextSecondary = ContextCompat.getColor(context, R.color.colorTextSecondary);
 
         // 运行时判断是否手表/小屏
         compact = detectCompactMode(context, dm);
 
         if (compact) {
-            leftLabelWidth = dp(dm, 26);
-            headerHeight = dp(dm, 24);
-            pad = dp(dm, 1);
+            leftLabelWidth = dp(26);
+            headerHeight = dp(24);
+            pad = dp(1);
             textSizeDay = sp(dm, 10);
             textSizePeriod = sp(dm, 10);
             textSizeCourse = sp(dm, 11);
         } else {
-            leftLabelWidth = dp(dm, 36);
-            headerHeight = dp(dm, 38);
-            pad = dp(dm, 2);
+            leftLabelWidth = dp(36);
+            headerHeight = dp(38);
+            pad = dp(2);
             textSizeDay = sp(dm, 13);
             textSizePeriod = sp(dm, 12);
             textSizeCourse = sp(dm, 13);
         }
 
-        float minRowHeight = compact ? dp(dm, 34) : dp(dm, 56);
-        rowHeight = minRowHeight;
+        rowHeight = compact ? dp(34) : dp(56);
 
         // 画笔基础配置
         borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setStrokeWidth(dp(dm, 0.5f));
-        borderPaint.setColor(r.getColor(R.color.colorDivider, null));
+        borderPaint.setStrokeWidth(Math.max(1f, dp(0.5f)));
+        borderPaint.setColor(colorDivider);
 
-        headerBgPaint.setColor(r.getColor(R.color.colorPrimary, null));
+        headerBgPaint.setColor(colorPrimary);
         headerBgPaint.setStyle(Paint.Style.FILL);
 
         bgPaint.setStyle(Paint.Style.FILL);
     }
 
     private static boolean detectCompactMode(Context ctx, DisplayMetrics dm) {
-        // 方案1：使用 screenWidthDp
         float widthDp = dm.widthPixels / dm.density;
         if (widthDp < 300) return true;
 
-        // 方案2：使用对角线估算（手表一般 < 4.5inch）
         WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
         if (wm != null) {
             int w = dm.widthPixels;
@@ -138,8 +147,8 @@ public class ScheduleGridView extends View {
         return false;
     }
 
-    private static float dp(DisplayMetrics dm, float v) {
-        return v * dm.density;
+    private float dp(float v) {
+        return v * density;
     }
 
     private static int sp(DisplayMetrics dm, int v) {
@@ -168,20 +177,13 @@ public class ScheduleGridView extends View {
         int w = MeasureSpec.getSize(widthMeasureSpec);
         int h = MeasureSpec.getSize(heightMeasureSpec);
 
-        Resources r = getResources();
-        DisplayMetrics dm = r.getDisplayMetrics();
-
-        // 可用宽度 = w - leftLabelWidth
         float availW = w - leftLabelWidth;
         cellWidth = availW / COLS;
 
-        // 可用高度 = h - headerHeight
         float availH = h - headerHeight;
-        // 根据 ROWS 反算 rowHeight，保证整体填满
         float fitRow = availH / ROWS;
         rowHeight = Math.max(rowHeight, fitRow);
 
-        // 让高度自适应（wrap 所有内容）
         int contentHeight = (int) (headerHeight + rowHeight * ROWS);
         int contentWidth = (int) (leftLabelWidth + cellWidth * COLS);
 
@@ -196,20 +198,17 @@ public class ScheduleGridView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        drawContent(canvas, 0, 0, getWidth(), getHeight());
+        drawContent(canvas, 0, 0);
     }
 
     /**
      * 把课表渲染到外部 Canvas，供导出图片复用。
      */
     public void drawToCanvas(Canvas canvas) {
-        drawContent(canvas, 0, 0, canvas.getWidth(), canvas.getHeight());
+        drawContent(canvas, 0, 0);
     }
 
-    private void drawContent(Canvas canvas, int offsetX, int offsetY, int totalW, int totalH) {
-        Resources r = getResources();
-        DisplayMetrics dm = r.getDisplayMetrics();
-
+    private void drawContent(Canvas canvas, int offsetX, int offsetY) {
         float left = offsetX + leftLabelWidth;
         float top = offsetY + headerHeight;
 
@@ -227,31 +226,26 @@ public class ScheduleGridView extends View {
             headerRects[c] = new RectF(x0, offsetY, x1, offsetY + headerHeight);
             canvas.drawRect(headerRects[c], headerBgPaint);
             canvas.drawText(DAY_LABELS[c], (x0 + x1) / 2f, headerTextY, textPaint);
-            // 分隔线
             canvas.drawLine(x1, offsetY, x1, offsetY + headerHeight, borderPaint);
         }
-        // 表头下横线
-        canvas.drawLine(offsetX, offsetY + headerHeight, offsetX + leftLabelWidth + cellWidth * COLS, offsetY + headerHeight, borderPaint);
+        canvas.drawLine(offsetX, offsetY + headerHeight,
+                offsetX + leftLabelWidth + cellWidth * COLS, offsetY + headerHeight, borderPaint);
 
-        // 左侧纵轴竖线
         canvas.drawLine(left, offsetY, left, top + rowHeight * ROWS, borderPaint);
 
-        // 2) 绘制每一行（先画默认边框 + 左侧课时标记）
+        // 2) 绘制每一行（左侧课时标记）
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextSize(textSizePeriod);
-        textPaint.setColor(r.getColor(R.color.colorTextSecondary, null));
+        textPaint.setColor(colorTextSecondary);
         for (int row = 0; row < ROWS; row++) {
             float y0 = top + row * rowHeight;
             float y1 = y0 + rowHeight;
 
-            // 左侧课时标签
-            RectF labelRect = new RectF(offsetX, y0, offsetX + leftLabelWidth, y1);
-            labelRects[row] = labelRect;
-            // 分隔：早读/上午/下午/晚自习 浅色背景
+            // 分隔组浅色背景
             int group = rowGroup(row);
             if (group >= 0 && labelGroupStart(group) == row) {
                 bgPaint.setColor(0xFFF0F2F5);
-                canvas.drawRect(labelRect, bgPaint);
+                canvas.drawRect(offsetX, y0, offsetX + leftLabelWidth, y1, bgPaint);
             }
 
             String label = Period.PERIOD_LABELS[row];
@@ -259,16 +253,16 @@ public class ScheduleGridView extends View {
             float cy = (y0 + y1) / 2f - (fm.ascent + fm.descent) / 2f;
             canvas.drawText(label, offsetX + leftLabelWidth / 2f, cy, textPaint);
 
-            // 横线
-            canvas.drawLine(offsetX, y1, offsetX + leftLabelWidth + cellWidth * COLS, y1, borderPaint);
+            canvas.drawLine(offsetX, y1,
+                    offsetX + leftLabelWidth + cellWidth * COLS, y1, borderPaint);
         }
 
-        // 3) 画课程块（先填充背景，再画文字，再画外框）
+        // 3) 画课程块
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextSize(textSizeCourse);
-        textPaint.setColor(r.getColor(R.color.colorTextPrimary, null));
+        textPaint.setColor(colorTextPrimary);
 
-        // 先初始化所有 cellRects 为空；后续被课程覆盖的只画外框
+        // 初始化 cellRects（用于 hit-testing）
         for (int col = 0; col < COLS; col++) {
             for (int row = 0; row < ROWS; row++) {
                 float x0 = left + col * cellWidth;
@@ -281,7 +275,6 @@ public class ScheduleGridView extends View {
 
         if (courses != null) {
             for (Course c : courses) {
-                // 只在块的"起点"处画（合并单元格的主块）
                 if (c.startPeriod < 0 || c.startPeriod >= ROWS) continue;
                 if (c.day < 0 || c.day >= COLS) continue;
 
@@ -292,19 +285,18 @@ public class ScheduleGridView extends View {
 
                 bgPaint.setColor(parseColorSafe(c.color));
                 canvas.drawRect(x0, y0, x1, y1, bgPaint);
-                // 边框
-                borderPaint.setColor(r.getColor(R.color.colorDivider, null));
+
+                borderPaint.setColor(colorDivider);
                 canvas.drawRect(x0, y0, x1, y1, borderPaint);
 
-                // 文字
                 if (c.name != null && !c.name.isEmpty()) {
                     drawCenteredText(canvas, c.name, x0, y0, x1, y1, textPaint);
                 }
             }
         }
 
-        // 最后画一个最外层框
-        borderPaint.setColor(r.getColor(R.color.colorDivider, null));
+        // 最外层框
+        borderPaint.setColor(colorDivider);
         canvas.drawRect(
                 offsetX + leftLabelWidth,
                 offsetY,
@@ -319,21 +311,18 @@ public class ScheduleGridView extends View {
         float availableW = x1 - x0 - pad * 2;
         float availableH = y1 - y0 - pad * 2;
 
-        // 自动缩小字号适应
         p.setTextSize(textSizeCourse);
-        while (p.measureText(text) > availableW && p.getTextSize() > dp(getResources().getDisplayMetrics(), 8)) {
+        while (p.measureText(text) > availableW && p.getTextSize() > dp(8)) {
             p.setTextSize(p.getTextSize() - 2f);
         }
 
         Paint.FontMetrics fm = p.getFontMetrics();
         float textH = fm.descent - fm.ascent;
 
-        // 单行放不下就换行
         String[] lines = wrapText(text, p, availableW);
         int lineCount = lines.length;
 
         if (textH * lineCount > availableH) {
-            // 空间不够就截断只显示第一行
             lineCount = 1;
             lines[0] = truncate(text, p, availableW);
         }
@@ -346,13 +335,11 @@ public class ScheduleGridView extends View {
     }
 
     private String[] wrapText(String text, Paint p, float maxW) {
-        // 简单按字符换行
         java.util.List<String> out = new java.util.ArrayList<>();
         StringBuilder cur = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
-            String tentative = cur.toString() + c;
-            if (p.measureText(tentative) > maxW && cur.length() > 0) {
+            if (p.measureText(cur.toString() + c) > maxW && cur.length() > 0) {
                 out.add(cur.toString());
                 cur.setLength(0);
             }
@@ -413,7 +400,6 @@ public class ScheduleGridView extends View {
         float x = event.getX();
         float y = event.getY();
 
-        // 点击了哪个单元格
         for (int col = 0; col < COLS; col++) {
             for (int row = 0; row < ROWS; row++) {
                 RectF r = cellRects[col][row];
